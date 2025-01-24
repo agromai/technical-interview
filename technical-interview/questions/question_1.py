@@ -42,27 +42,27 @@ def create_summary(df: pd.DataFrame, count_na: pd.Series):
    return summary_df
 
 
-if __name__ == '__main__':
-   df = pd.read_csv('technical-interview\data\sales_data.csv')
-   # Convert date string to datetime
-   df['sale_date'] = pd.to_datetime(df['sale_date'])
+df = pd.read_csv('technical-interview\data\sales_data.csv')
+# Convert date string to datetime
+df['sale_date'] = pd.to_datetime(df['sale_date'])
 
-   # CountNA only when data is not handled
-   count_na = df.isna().sum()
-   # Price NaN values after category handling
-   price_na = df.groupby('category')['price'].apply(lambda x: x.isna().sum())
+# CountNA only when data is not handled
+count_na = df.isna().sum()
+# Price NaN values after category handling
+price_na = df.groupby('category')['price'].apply(lambda x: x.isna().sum())
 
-   df = handle_na_values(df, 'category', True)
-   # Price NaN values before category handling
-   price_na_2 = df.groupby('category')['price'].apply(lambda x: x.isna().sum())
-   mode_category = df['category'].mode()[0]
-   compare_null = price_na_2[mode_category] - price_na[mode_category]
-   
-   df = handle_na_values(df, 'price')
-   summary_df = create_summary(df, price_na_2)
-   summary_df.to_csv('dataset/summary_sales_data.csv', index=False)
+df = handle_na_values(df, 'category', True)
+# Price NaN values before category handling
+price_na_2 = df.groupby('category')['price'].apply(lambda x: x.isna().sum())
+mode_category = df['category'].mode()[0]
+compare_null = price_na_2[mode_category] - price_na[mode_category]
 
-   print(f"{count_na['category']} null values on category columns converted to {mode_category}")
-   print(f"{count_na['price']} null values on price columns converted to its mean value")
-   print(f"{compare_null} row of null price values based on null category added to {mode_category} missing values")
+df = handle_na_values(df, 'price')
+summary_df = create_summary(df, price_na_2)
+df.to_csv('dataset/sales_data.csv', index=False)
+summary_df.to_csv('dataset/summary_sales_data.csv', index=False)
+
+print(f"{count_na['category']} null values on category columns converted to {mode_category}")
+print(f"{count_na['price']} null values on price columns converted to its mean value")
+print(f"{compare_null} row of null price values based on null category added to {mode_category} missing values")
 
