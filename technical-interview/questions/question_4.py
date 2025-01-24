@@ -215,7 +215,7 @@ plt.ylabel("Price ($)")
 plt.grid(True)
 plt.xticks(rotation=45)
 plt.tight_layout()
-plt.show()
+plt.savefig('confidence_intervals.png')
 
 #%%
 
