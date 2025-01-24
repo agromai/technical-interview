@@ -17,9 +17,6 @@ The cleaned dataset should be ready for further analysis.
 """
 import pandas as pd
 
-
-df = pd.read_csv('technical-interview\data\sales_data.csv')
-
 def handle_na_values(df: pd.DataFrame, col_name: str, mode: bool = False) -> pd.DataFrame:
    if mode:
       df.loc[df[col_name].isna(), col_name] = df[col_name].mode()[0]
@@ -37,15 +34,16 @@ def create_summary(df: pd.DataFrame, count_na: pd.Series):
 
    # Combine into a single DataFrame
    summary_df = pd.DataFrame({
-        "Total Sales": total_sales,
-        "Average Price": avg_price,
-        "Missing Price Values Handled": count_na
+        "total_sales": total_sales,
+        "avg_price": avg_price,
+        "missing_values": count_na
     }).reset_index()
 
    return summary_df
 
 
 if __name__ == '__main__':
+   df = pd.read_csv('technical-interview\data\sales_data.csv')
    # Convert date string to datetime
    df['sale_date'] = pd.to_datetime(df['sale_date'])
 
@@ -57,9 +55,14 @@ if __name__ == '__main__':
    df = handle_na_values(df, 'category', True)
    # Price NaN values before category handling
    price_na_2 = df.groupby('category')['price'].apply(lambda x: x.isna().sum())
+   mode_category = df['category'].mode()[0]
+   compare_null = price_na_2[mode_category] - price_na[mode_category]
    
    df = handle_na_values(df, 'price')
    summary_df = create_summary(df, price_na_2)
-   summary_df.to_csv('summary_sales_data.csv')
-   print(f"{count_na['category']} null values on category columns converted to {df['category'].mode()[0]}")
+   summary_df.to_csv('dataset/summary_sales_data.csv', index=False)
+
+   print(f"{count_na['category']} null values on category columns converted to {mode_category}")
    print(f"{count_na['price']} null values on price columns converted to its mean value")
+   print(f"{compare_null} row of null price values based on null category added to {mode_category} missing values")
+
