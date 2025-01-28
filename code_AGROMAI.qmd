@@ -1,0 +1,642 @@
+---
+title: "Teste Técnico"
+subtitle: "**Posição Júnior - Agromai**"
+author: "Fernanda Kelly R. Silva | www.fernandakellyrs.com" 
+editor: visual
+jupyter: python3
+lang: pt 
+date: "27/01/2025" 
+date-format: short 
+toc: true 
+format: 
+    html: 
+      embed-resources: true
+      code-fold: false 
+      code-tools: true  
+      theme: 
+        light: cosmo
+        dark: superhero
+title-block-banner: "true" 
+code-annotations: hover
+execute:
+  warning: false
+  message: false
+---
+
+# Instalação de pacotes
+
+Ao instalar os pacotes no início de qualquer projeto, garantimos o acesso a um ecossistema padronizado e poderoso, eliminando a necessidade de procurar soluções fragmentadas para diferentes partes do fluxo de trabalho, o que acelera o processo de desenvolvimento e reduz erros.
+
+Todas as bibliotecas enviadas como necessárias para instalação foram instaladas via terminal utlizando *pip install nome-pacote==version*.
+
+É importante ressaltar que estou utilizando a IDE RStudio. Essa IDE é passivel de programação em python através do pacote [reticulate](https://cran.r-project.org/web/packages/reticulate/index.html). Como interface estou utilizando o [Quarto](https://quarto.org/docs/get-started/hello/rstudio.html).
+
+```{markdown}
+R version 4.4.2 (2024-10-31) -- "Pile of Leaves"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
+```
+
+```{r}
+library(tidyverse)
+library(reticulate)
+library(readr)
+```
+
+```{python}
+
+# pandas==1.3.3
+# numpy==1.21.2
+# scipy==1.7.1
+# matplotlib==3.4.3
+# scikit-learn==0.24.2
+# statsmodels==0.12.2
+
+import pandas
+import numpy
+import scipy
+import matplotlib
+import sklearn
+import statsmodels
+```
+
+# Question 1: *Data Cleaning and Basic Analysis*
+
+Work with sales data to demonstrate your ability to handle missing values and perform basic statistical analysis.
+
+::: panel-tabset
+# Python
+
+1.  Load and examine the dataset
+
+Fazendo upload da base de dados.
+
+```{python}
+sales_data = pandas.read_csv("technical-interview/data/sales_data.csv")
+customer_purchases = pandas.read_csv("technical-interview/data/customer_purchases.csv")
+```
+
+Verifiquei que não há chave entre as bases para um futuro join.
+
+2.  Clean the data:
+
+    -   Handle missing values in the 'price' column (replace with mean)
+    -   Handle missing values in the 'category' column (replace with mode)
+
+É possível notar que há 30 valores ausentes na coluna *category*. Como é solicitado, é necessário inserir a moda (mode), que pela frequência é a categoria *Electronics*, visto que a definição de moda é aquela categoria/número que mais se repete.
+
+```{python}
+frequency_table = sales_data['category'].value_counts(dropna=False).reset_index()
+print(frequency_table)
+```
+
+No caso da variável **price**, utilizarei a função *describe*, visto que essa variável é numérica continua. Logo, podemos concluir que há 49 valores ausentes, sua média é de 101.88 e demais informações de 1°,2°, 3° quartil, minimo e máximo.
+
+```{python}
+summary_table = sales_data['price'].describe()
+summary_table
+```
+
+O número de valores ausentes é:
+
+```{python}
+valor_na = sales_data['price'].isna().sum()
+valor_na
+```
+
+Para que não haja erro de consultas futuramente, irei criar uma nova variável com essas alterações. Essa variável será denominada por *category_Mode* e, para variável *price* como *price_Mean*. Sendo assim,
+
+```{python}
+Mean_price = sales_data['price'].mean()
+sales_data['price_Mean']  = sales_data['price'].fillna(Mean_price)
+
+Mode_category = sales_data['category'].mode()[0]
+sales_data['category_Mode']  = sales_data['category'].fillna(Mode_category)
+
+```
+
+Avaliando os NA's, veja que não há mais valores ausentes.
+
+```{python}
+sales_data['price_Mean'].isna().sum()
+sales_data['category_Mode'].isna().sum()
+```
+
+-   Convert 'sale_date' to datetime
+
+Em relação a variável *sale_date* temos que esta pertence a classe *Date*, para que esta seja *datetime*,
+
+```{python}
+sales_data['sale_date'] = pandas.to_datetime(sales_data['sale_date'])
+```
+
+3.  Create a summary of:
+
+Para as tabelas resumo estou considerando as variáveis *sem* os valores ausentes.
+
+-   Total number of sales per category
+
+```{python}
+totalNumber_category = sales_data.groupby('category_Mode').size()
+totalNumber_category
+```
+
+-   Average price per category
+
+Para *Average price per category*:
+
+```{python}
+
+averagePrice_category = sales_data.groupby('category_Mode').mean('price')
+averagePrice_category
+
+```
+
+-   Number of missing values handled
+
+Para *Number of missing values handled*, vimos que manipulamos um total de 79 caselas.
+
+```{python}
+sales_data['price'].isna().sum()
+sales_data['category'].isna().sum()
+```
+
+# R
+
+Fazendo upload da base de dados.
+
+```{r}
+customer_purchases_R <- readr::read_csv("technical-interview/data/customer_purchases.csv")
+sales_data_R <- readr::read_csv("technical-interview/data/sales_data.csv")
+```
+
+É possível notar que há 30 valores ausentes na coluna *category*. Como é solicitado, é necessário inserir a moda (mode), que pela frequência é a categoria *Electronics*, visto que a definição de moda é aquela categoria/número que mais se repete.
+
+```{r}
+janitor::tabyl(sales_data_R$category, show_na = TRUE)
+```
+
+No caso da variável **price**, utilizarei a função *summary*, visto que essa variável é numérica continua. Logo, podemos concluir que há 49 valores ausentes, sua média é de 101.88 e demais informações de 1°,2°, 3° quartil, minimo e máximo.
+
+```{r}
+summary(sales_data_R$price)
+```
+
+Para que não haja erro de consultas futuramente, irei criar uma nova variável com essas alterações. Essa variável será denominada por *category_Mode* e, para variável *price* como *price_Mean*. Sendo assim,
+
+```{r}
+sales_data_R <- sales_data_R %>% 
+  dplyr::mutate(category_Mode = base::ifelse(is.na(category), "Electronics", category),
+                price_Mean = base::ifelse(is.na(price), base::mean(price, na.rm = TRUE), price))
+```
+
+Avaliando a variável *category_Mode*:
+
+```{r}
+janitor::tabyl(sales_data_R$category_Mode, show_na = TRUE)
+```
+
+Avaliando a variável *price_Mean*:
+
+```{r}
+summary(sales_data_R$price_Mean)
+```
+
+Veja que não há mais valores ausentes.
+
+Em relação a variável *sale_date* temos que esta pertence a classe *Date*, para que esta seja *datetime*,
+
+```{r}
+sales_data_R <- sales_data_R %>% 
+  dplyr::mutate(sale_date_datetime = as.POSIXct(sale_date))
+```
+
+Avaliando,
+
+```{r}
+class(sales_data_R$sale_date_datetime)
+```
+
+Para as tabelas resumo estou considerando as variáveis *sem* os valores ausentes,
+
+Para *Total number of sales per category* foi considerado *sale_id* como indicador para o número de vendas. Veja abaixo o resultado.
+
+```{r}
+sales_data_R %>% 
+  dplyr::group_by(category_Mode) %>% 
+  dplyr::count() 
+```
+
+Para *Average price per category*:
+
+```{r}
+sales_data_R %>% 
+  dplyr::group_by(category_Mode) %>% 
+  dplyr::summarise(average_price =  mean(price_Mean))
+```
+
+Para *Number of missing values handled*, vimos que manipulamos um total de 79 caselas.
+:::
+
+# Question 2: Data Manipulation and Aggregation:
+
+Show your skills in transforming and aggregating data to derive meaningful insights.
+
+::: panel-tabset
+# Python
+
+1.  Calculate the following metrics per customer:
+
+O *per customer* é um pouco ambíguo e, por isso, abaixo estão as medidas em sua totalidade e agrupadas por *customer_id*.
+
+-   Total amount spent
+
+```{python}
+amountSpent = customer_purchases['amount'].sum().round(2)
+amountSpent
+```
+
+```{python}
+amountSpent_PC = customer_purchases.groupby('customer_id', as_index=False)['amount'].sum()
+amountSpent_PC
+```
+
+-   Average purchase value
+
+```{python}
+amountMean = customer_purchases['amount'].mean()
+amountMean
+```
+
+```{python}
+amountMean_PC = customer_purchases.groupby('customer_id', as_index=False)['amount'].mean()
+amountMean_PC
+```
+
+-   Number of purchases
+
+O número de compras é o número total de observações do banco de dados, visto que não há *purchase_id* com repetição. Porém, para cada *customer_id* teremos os seguintes resultados:
+
+```{python}
+amountCount_PC = customer_purchases.groupby('customer_id', as_index=False)['purchase_id'].count()
+amountCount_PC
+```
+
+Logo, se consideramos o número de compras por customer, teremos somente 100 compradores.
+
+```{python}
+amountCount = customer_purchases.groupby('customer_id').size()
+amountCount
+```
+
+-   Most frequently bought category
+
+A categoria mais frequente é a *Home & Garden*.
+
+```{python}
+freqBought_category = customer_purchases.groupby('category').size()
+freqBought_category
+```
+
+2.  Create a summary DataFrame with:
+
+-   Top 5 customers by total spend
+
+```{python}
+
+top5_customer = (customer_purchases.groupby('customer_id')
+          .agg(somaAmount=('amount', 'sum'))  # Calculando a soma da coluna 'amount'
+          .reset_index()  # Para garantir que 'customer_id' seja uma coluna normal
+          .sort_values(by='somaAmount', ascending=False))  # Ordenando pela soma em ordem decrescente
+
+top5_customer
+```
+
+-   Bottom 5 customers by total spend
+
+```{python}
+
+top5_customer = (customer_purchases.groupby('customer_id')
+          .agg(somaAmount=('amount', 'sum'))  # Calculando a soma da coluna 'amount'
+          .reset_index()  # Para garantir que 'customer_id' seja uma coluna normal
+          .sort_values(by='somaAmount', ascending=True))  # Ordenando pela soma em ordem crescente
+
+top5_customer
+```
+
+3.  Calculate the monthly purchase trends:
+
+Aqui irei utilizar o banco de dados sales_data.
+
+-   Total sales per month
+
+É necessário fazer a tratativa de datas.
+
+```{python}
+sales_data['sale_date'] = pandas.to_datetime(sales_data['sale_date'])
+```
+
+Como o interesse da medida é por mês, a ideia é extrair da data somente o mês.
+
+```{python}
+sales_data['mes_Sale'] = sales_data['sale_date'].dt.month
+```
+
+Há, desde o início, a prerrogativa de trataiva dos valores ausente da variável *price* com sua respectiva média, sendo assim:
+
+```{python}
+mean_price = sales_data['price'].mean() 
+sales_data['price'] = sales_data['price'].fillna(mean_price) 
+```
+
+É importante ressaltar que não há em escrito que a variável price seja por unidade, mas como há a variável *quantity* e para um bom analista, tira-se por base que a variável *price* é por unidade. Sendo assim, devemos multiplicar o preço pelo número de unidades para alcançar o valor real gasto na compra.
+
+```{python}
+sales_data['sales'] = sales_data['price']*sales_data['quantity']
+```
+
+A solicitação é o valor gasto por mês, logo há a necessidade de agrupar por mês o valor total gasto na compra.
+
+```{python}
+sales_data['totalSales'] = sales_data.groupby('mes_Sale')['sales'].transform('sum')
+```
+
+A seguir a tabela resultado:
+
+```{python}
+distinct_sales_data = sales_data.drop_duplicates(subset=['mes_Sale'])
+print(distinct_sales_data)
+```
+
+-   Average purchase value per month
+
+Como este caso é para a compra, seguiremos a mesma lógica da questão anterior, porém com o banco de dados *customer*. É importante ressaltar que no caso da variável *amount* não temos valores faltantes.
+
+```{python}
+customer_purchases['purchase_date'] = pandas.to_datetime(customer_purchases['purchase_date'])
+customer_purchases['mes_Purchase'] = customer_purchases['purchase_date'].dt.month
+
+customer_purchases['totalCustomer'] = customer_purchases.groupby('mes_Purchase')['amount'].transform('mean')
+
+distinct_customer_data = customer_purchases.drop_duplicates(subset=['mes_Purchase'])
+print(distinct_customer_data)
+```
+
+-   Bonus: Identify any customers who haven't made a purchase in the last 3 months
+
+Utilizando a data de 27/01/2025 como data diária, no banco de dados oferecido todos os clientes não fizeram compras nos últimos 3 meses. Devido a este caso, vou utilizar a data máxima do banco de dados que é 2023-10-27 como referência. Sendo assim, teremos *5* clientes que não compram há mais de 3 meses.
+
+-   CUST_041
+-   CUST_048
+-   CUST_031
+-   CUST_016
+-   CUST_067
+
+Para chegar a esta conclusão utilizei os seguintes passo:
+
+-   Criando a coluna com data especificada e inserindo no banco de dados:
+
+```{python}
+data_estudo = pandas.to_datetime("2023-10-27")
+customer_purchases['data_estudo'] = data_estudo
+```
+
+-   Para que haja a dioferença de datas, ambas precisam estar na mesma classe:
+
+```{python}
+customer_purchases['data_estudo'] = pandas.to_datetime(customer_purchases['data_estudo'])
+customer_purchases['purchase_date'] = pandas.to_datetime(customer_purchases['purchase_date'])
+```
+
+-   Fazendo a diferença entre as datas e contabilizando o número de dias, lembrando que o nosso interesse é em contar aqueles que não compram a mais de 3 meses (90 dias).
+
+```{python}
+customer_purchases['puchase_Day'] = (customer_purchases['purchase_date'] - customer_purchases['data_estudo']).dt.days
+```
+
+-   Se o interesse é naqueles que não compram a mais de 90 dias, pensei em criar uma dummy com SIM e NÃO para aqueles que não compram a -90 dias, ou seja, o meu interesse é por aquele que será classificado como SIM.
+
+```{python}
+customer_purchases['puchase_Day3'] = customer_purchases['puchase_Day'].apply(lambda x: 'Sim' if x < -90 else 'Não')
+```
+
+-   Esse é o momento crucial para a análise, visto que o mesmo customer poderá estar classificado como SIM e NÃO, visto que este customer pode fazer mais de uma compra, inclusive, de produtos diferentes. Ou seja, ele não compra há mais de 90 dias aquele determinado produto, mas comprou outros, o que faz que ele não se encaixe nessa categoria de clientes que não compram há mais de 90 dias.
+
+```{python}
+bonusCustomer = customer_purchases.groupby('customer_id')['puchase_Day3'].value_counts().reset_index(name='count')
+print(bonusCustomer)
+```
+
+# R
+
+1.  Calculate the following metrics per customer:
+
+    -   Total amount spent
+
+```{r}
+base::sum(customer_purchases_R$amount)
+```
+
+-   Average purchase value
+
+```{r}
+base::mean(customer_purchases_R$amount)
+```
+
+-   Number of purchases
+
+O número de compras é o número total de observações, visto que não há *purchase_id* com repetição.
+
+```{r}
+customer_purchases %>% 
+  dplyr::count(purchase_id) 
+```
+
+Porém, se consideramos o número de compras por customer, teremos somente 100 compras.
+
+```{r}
+customer_purchases %>% 
+dplyr::group_by(customer_id) %>% 
+dplyr::count()
+```
+
+-   Most frequently bought category
+
+```{r}
+customer_purchases_R %>% 
+  dplyr::group_by(category) %>% 
+  dplyr::count()
+```
+
+2.  Create a summary DataFrame with:
+
+    -   Top 5 customers by total spend
+
+```{r}
+customer_purchases_R %>% 
+  dplyr::group_by(customer_id) %>% 
+  dplyr::summarise(meanCustomer = base::mean(amount)) %>% 
+  dplyr::arrange(desc(meanCustomer))
+```
+
+-   Bottom 5 customers by total spend
+
+```{r}
+customer_purchases_R %>% 
+  dplyr::group_by(customer_id) %>% 
+  dplyr::summarise(meanCustomer = base::mean(amount)) %>% 
+  dplyr::arrange((meanCustomer))
+```
+
+3.  Calculate the monthly purchase trends:
+
+    -   Total sales per month
+
+```{r}
+# sales_data_R <- sales_data_R %>% 
+#   dplyr::mutate(mes_Sale = lubridate::month(sale_date)) %>% 
+#   dplyr::mutate(price = base::ifelse(is.na(price), base::mean(price, na.rm = TRUE), price),
+#                 sales = quantity*price) %>% 
+#   dplyr::group_by(mes_Sale) %>% 
+#   dplyr::mutate(totalSales = sum(sales)) %>% 
+#   dplyr::ungroup()
+
+sales_data_R %>% 
+  dplyr::mutate(mes_Sale = lubridate::month(sale_date)) %>% 
+  dplyr::mutate(price = base::ifelse(is.na(price), base::mean(price, na.rm = TRUE), price),
+                sales = quantity*price) %>% 
+  dplyr::group_by(mes_Sale) %>% 
+  dplyr::mutate(totalSales = sum(sales)) 
+```
+
+-   Average purchase value per month
+
+```{r}
+customer_purchases_R %>% 
+  dplyr::mutate(mes_Purchase = lubridate::month(purchase_date)) %>% 
+  dplyr::group_by(mes_Purchase) %>% 
+  dplyr::mutate(totalPurchase = mean(amount)) 
+```
+
+-   Bonus: Identify any customers who haven't made a purchase in the last 3 months
+
+Utilizando a data de 27/01/2025 como data diária, no banco de dados oferecido todos os clientes não fizeram compras nos últimos 3 meses. Devido a este caso, vou utilizar a data máxima do banco de dados que é 2023-10-27 como referência. Sendo assim, teremos *5* clientes que não compram há mais de 3 meses.
+
+-   CUST_041
+-   CUST_048
+-   CUST_031
+-   CUST_016
+-   CUST_067
+
+```{r}
+customer_purchases_R %>% 
+  dplyr::mutate(data_estudo = rep("2023-10-27", 1000),
+                data_estudo      = base::as.Date(data_estudo),
+                puchase_Day = purchase_date - data_estudo,
+                puchase_Day3 = base::ifelse(puchase_Day < -90, "Sim", "Não")) %>% 
+  dplyr::group_by(customer_id) %>%
+  dplyr::count(puchase_Day3)
+```
+:::
+
+# Question 3: Data Visualization:
+
+Create informative visualizations to communicate data insights effectively.
+
+1.  Create a line plot showing daily sales trends over time
+    -   Include a 7-day moving average line
+
+Para a construção desse gráfico, vou seguir as seguintes etapas:
+
+-   Como vamos trabalhar com data, ela precisa estar na classe desejada.
+
+```{python}
+sales_data['sale_date'] = pandas.to_datetime(sales_data['sale_date'])
+```
+
+-   O objetivo é que esse plot seja diário de vendas, por isso, independente do produto, devemos agrupar a quantidade de venda por dia, mas nós não temos mais de uma venda por dia, o que temos variando é a quantidade de vendas, o que faz sentido ter uma média móvel.
+
+```{python}
+diaSales = sales_data.groupby('sale_date')['quantity'].sum().reset_index()
+```
+
+-   Ordenando as datas devido a média a móvel:
+
+```{python}
+diaSales = diaSales.sort_values(by='sale_date')
+```
+
+-   Calculando a média móvel de 7 dias:
+
+```{python}
+diaSales['7Dias_avg'] = diaSales['quantity'].rolling(window=7).mean()
+```
+
+-   Plotando o gráfico:
+
+```{python}
+# matplotlib.pyplot.figure(figsize=(12, 6))
+# 
+# matplotlib.pyplot.plot()(diaSales['sale_date'], diaSales['quantity'], label='Vendas Diárias', color='blue', alpha=0.6)
+# matplotlib.pyplot.plot(diaSales['sale_date'], diaSales['7Dias_avg'], label='Média Móvel (7 dias)', color='red', linewidth=2)
+```
+
+2.  Create a bar plot showing:
+
+    -   Total sales by category
+    -   Include error bars representing standard deviation
+    
+```{r}
+ggplot(sales_data_R) +
+  aes(x = category_Mode, weight = sales) +
+  geom_bar(fill = "#112446") +
+  theme_minimal()
+```
+    
+
+3.  Create a scatter plot showing:
+
+    -   Relationship between quantity and price
+    -   Color points by category
+    -   Add a trend line
+
+```{r}
+ggplot(sales_data_R) +
+  aes(x = quantity, y = price, colour = category_Mode) +
+  geom_jitter(size = 1.5) +
+  scale_color_hue(direction = 1) +
+  theme_minimal()
+```
+
+Requirements: 
+- Use appropriate labels and titles
+- Include a legend where necessary 
+- Use a consistent color scheme 
+- Save all plots as PNG files
+
+# Question 4: Advanced Analytics (Required for Data Scientists, Bonus for Juniors):
+
+Apply advanced statistical methods and machine learning techniques to solve a complex business problem.
+
+1.  Implement error handling for the following analyses:
+
+    -   Perform a one-way ANOVA test to compare prices across different categories
+    -   Calculate and plot the confidence intervals for mean prices in each category
+    -   Identify potential outliers using z-scores
+
+2.  Debug and fix the following code snippet that attempts to perform a chi-square test:
+
+``` python
+    def perform_chi_square(data):
+        observed = data.groupby(['category', 'status']).size()
+        chi2, p_value = stats.chi2_contingency(observed)
+        return chi2, p_value
+```
+
+3.  Implement proper logging to track:
+
+    -   Any statistical assumptions violations
+    -   Data type mismatches
+    -   Invalid calculations
+
+Your solution should be robust against various edge cases and include appropriate error messages.
