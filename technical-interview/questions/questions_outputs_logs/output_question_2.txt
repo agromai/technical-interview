@@ -1,0 +1,71 @@
+
+Matrix of metrics per customer:
+
+             total_spent  ...  most_common_category
+customer_id               ...                      
+CUST_001         1550.75  ...         Home & Garden
+CUST_002         1313.75  ...           Electronics
+CUST_003         1323.92  ...              Clothing
+CUST_004         1102.69  ...           Electronics
+CUST_005         1199.27  ...           Electronics
+CUST_006          802.74  ...                 Books
+CUST_007          801.41  ...                 Books
+CUST_008         1203.26  ...                 Books
+CUST_009          921.31  ...                Sports
+CUST_010          590.19  ...                 Books
+
+[10 rows x 4 columns]
+
+Top 5 customers by total spend:
+             total_spent  ...  most_common_category
+customer_id               ...                      
+CUST_062         2102.22  ...         Home & Garden
+CUST_090         2040.24  ...           Electronics
+CUST_099         2000.90  ...                Sports
+CUST_092         1779.33  ...              Clothing
+CUST_033         1775.29  ...                 Books
+
+[5 rows x 4 columns]
+
+Bottom 5 customers by total spend
+             total_spent  ...  most_common_category
+customer_id               ...                      
+CUST_091          480.91  ...         Home & Garden
+CUST_040          459.16  ...           Electronics
+CUST_083          450.57  ...              Clothing
+CUST_011          373.26  ...                Sports
+CUST_031          356.43  ...           Electronics
+
+[5 rows x 4 columns]
+
+Transformation successful.
+
+
+Total sales per month
+ 2023-01    12531.88
+2023-02     8860.30
+2023-03    10244.64
+2023-04    10129.62
+2023-05     9968.57
+2023-06    11731.21
+2023-07     8154.34
+2023-08    11633.22
+2023-09     8681.77
+2023-10    10057.56
+Freq: M
+
+Average purchase value per month
+ 2023-01    102.72
+2023-02    104.24
+2023-03    101.43
+2023-04    100.29
+2023-05    101.72
+2023-06    103.82
+2023-07    101.93
+2023-08    102.95
+2023-09    100.95
+2023-10     99.58
+Freq: M
+
+List of inactive customers in the last three months:
+ ['CUST_048' 'CUST_016' 'CUST_041' 'CUST_031' 'CUST_067']

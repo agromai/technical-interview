@@ -1,0 +1,4 @@
+2025-04-03 01:18:12,335 - INFO - Dataset successfully loaded.
+2025-04-03 01:18:12,338 - INFO - ANOVA test successfully performed. F-Statistic: 0.35472413595004715, P-Value: 0.8408320081141605
+2025-04-03 01:18:12,563 - INFO - Confidence intervals successfully calculated and plotted.
+2025-04-03 01:18:12,564 - INFO - Outliers successfully identified. Total outliers: 2

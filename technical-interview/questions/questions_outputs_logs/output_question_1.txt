@@ -1,0 +1,26 @@
+Price replacement successful!
+
+Category replacement successful!
+
+Sale date type transformation successful.
+
+Total number of sales per category:
+Electronics      238
+Home & Garden    201
+Sports           197
+Clothing         185
+Books            179
+
+Average price per category:
+Books            101.70
+Clothing         103.71
+Electronics      100.53
+Home & Garden    102.61
+Sports           101.22
+
+Number of missing values:
+sale_id      0
+sale_date    0
+category     0
+price        0
+quantity     0
