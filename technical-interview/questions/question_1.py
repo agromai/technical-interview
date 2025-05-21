@@ -16,24 +16,27 @@ Using the provided dataset 'sales_data.csv', perform the following tasks:
 The cleaned dataset should be ready for further analysis.
 """
 
-import pandas as pd 
+import pandas as pd
 import os
 
-path_csv = os.path.join(os.getcwd(),'data','sales_data.csv')
-
+path_csv = os.path.join(os.getcwd(),'..','data','sales_data.csv')
 file = pd.read_csv(path_csv)
+
 print(file.info())
 
+# Data cleaning 
 file['price'] = file['price'].fillna(file['price'].mean())
 
 file['category'] = file['category'].fillna(file['category'].mode()[0])
 
 file['sale_date'] = pd.to_datetime(file['sale_date'], errors='coerce')
 
+# Counts the total number of sales for each category
 total_sales_category = file['category'].value_counts()
 print("\nTotal number of sales per category: ")
 print(total_sales_category)
 
+# Calculates the average price for each category.
 average_price_category = file.groupby('category')['price'].mean()
 print("\nAverage price per category: ")
 print(average_price_category)

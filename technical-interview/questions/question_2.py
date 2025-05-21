@@ -23,14 +23,19 @@ Bonus: Identify any customers who haven't made a purchase in the last 3 months
 import pandas as pd
 import os
 
-path_csv = os.path.join(os.getcwd(),'data','customer_purchases.csv')
-
+path_csv = os.path.join(os.getcwd(),'..','data','customer_purchases.csv')
 file = pd.read_csv(path_csv)
 
+# Calculates the total amount spent by each customer
 total_amount_spent = file.groupby('customer_id')['amount'].sum()
+
+# Calculates the average purchase value for each customer
 average_purchase_value = file.groupby('customer_id')['amount'].mean()
+
+# Counts the number of purchases made by each customer
 number_purchases = file.groupby('customer_id')['amount'].count()
 
+# Returns the most frequent value in the given series.
 def frequent_category(series):
     return series.mode().iloc[0]
 
@@ -51,6 +56,7 @@ print(top_5_customers)
 print("\nBottom 5 customers by total spend:")
 print(bottom_5_customers)
 
+# Converts the date column to datetime and extracts year and month
 file['purchase_date'] = pd.to_datetime(file['purchase_date'])
 file['year_month'] = file['purchase_date'].dt.to_period('M')
 total_sales_month = file.groupby('year_month')['amount'].sum()
