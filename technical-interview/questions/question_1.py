@@ -18,14 +18,14 @@ The cleaned dataset should be ready for further analysis.
 
 # Your code here
 import pandas
-# 1
+# 1.Load and examine the dataset
 dataSale = pandas.read_csv("../data/sales_data.csv")
 print(dataSale)
 
 valores_ausentes = dataSale.isna().sum()
 print("Valores ausentes antes o tratamento:\n", valores_ausentes)  # 30+49 = 79 NaN
 
-# 2
+# 2.Clean the data:
 print(dataSale['price'][1])
 media = sum(dataSale['price'])/len(dataSale['price'])
 print(media)
@@ -41,7 +41,7 @@ print(dataSale['category'])
 dataSale['sale_date'] = pandas.to_datetime(dataSale['sale_date'])
 print(dataSale['sale_date'])
 
-# 3
+# 3. Create a summary of:
 vendas_Cat = dataSale.groupby('category')['quantity'].sum()
 print(vendas_Cat)
 preco_Cat = dataSale.groupby('category')['price'].mean()
