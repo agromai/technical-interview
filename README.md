@@ -66,3 +66,81 @@ Apply advanced statistical methods and machine learning techniques to solve a co
 - 24 hours from the time you get the email from the recruiter.
 
 Good luck!
+
+---
+
+
+## Your Solutions
+
+### Questão 1: Data Cleaning and Basic Analysis
+
+Para a questão 1, realizei as seguintes etapas:
+
+- Implementei a função `load_data()` com tratamento de exceções para carregar o CSV com segurança.
+- Preenchi valores ausentes da coluna `price` com a **média** da coluna.
+- Preenchi valores ausentes da coluna `category` com a **moda** (categoria mais frequente).
+- Converti a coluna `sale_date` para o tipo `datetime`, com tratamento de erro silencioso (`errors='coerce'`).
+- Exibi as 20 primeiras linhas e as informações básicas do DataFrame.
+- Calculei:
+  - Total de vendas por categoria (`value_counts`)
+  - Preço médio por categoria (`groupby`)
+  - Total de valores ausentes tratados
+
+O código foi comentado e organizado por seções.
+
+### Alterações no `requirements.txt`
+
+Atualizei o arquivo `requirements.txt` com versões mais recentes das bibliotecas usadas no projeto, visando compatibilidade e estabilidade:
+
+**Arquivo anterior (original):**    
+
+pandas==1.3.3
+numpy==1.21.2
+scipy==1.7.1
+matplotlib==3.4.3
+scikit-learn==0.24.2
+statsmodels==0.12.2
+
+
+**Novo arquivo atualizado:**  
+
+pandas==2.2.2
+numpy==1.26.4
+scipy==1.13.1
+matplotlib==3.8.4
+scikit-learn==1.4.2
+statsmodels==0.14.1
+
+
+Essas versões foram utilizadas com sucesso no ambiente virtual criado com `venv`, sem o uso do `conda`, e foram compatíveis com o script desenvolvido para a questão 1.
+
+
+### Questão 2: Manipulação e Análise de Dados
+
+Nesta parte do desafio, trabalhei com dados de compras de clientes para entender melhor o comportamento de consumo.
+
+Organizei o código em funções para facilitar a leitura e o reuso. As principais etapas foram:
+
+- **`load_data()`**  
+  Carrega os dados do CSV e converte a coluna de datas para o formato correto (`datetime`). Também trata erros caso o arquivo não seja encontrado.
+
+- **`customer_metrics()`**  
+  Calcula para cada cliente:
+  - Total gasto
+  - Valor médio por compra
+  - Número total de compras
+  - Categoria mais comprada
+
+- **`top_bottom_customers()`**  
+  Retorna os 5 clientes que mais gastaram e os 5 que menos gastaram.
+
+- **`monthly_trends()`**  
+  Mostra como as vendas variaram ao longo dos meses (total e média).
+
+- **`inactive_customers()`**  
+  Identifica clientes que não fizeram compras nos últimos 3 meses.
+
+Mantive o código limpo, comentado e fácil de executar para quem quiser testar.
+
+
+---
